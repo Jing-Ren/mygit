@@ -8,15 +8,17 @@
 <head>
 	<meta charset="UTF-8">
 	<title>更新调度调整原因信息</title>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div>
+<div align="center">
+<div style="width:60%;">
 <form method="post"action="chart_info(database).asp">
-<table width="560px"heigth="350px"border="3"align="center"cellspacing="5px"cellpadding="5px"frame="box" rules="all">
-
-	<caption align="top">调度调整原因分析</caption>
-		<thead>
-		<tr >
+<table class="table table-striped"frame="hsides"border="1"style="width:60%;">
+	<caption align="top">调度</caption>
+		<tr align="center"width="100">
 			<td hidden="true">ID </td >
 			<td></td>
 			<td >天气原因</td>
@@ -26,9 +28,9 @@
 			<td >行政调整</td>
 			<td >其他</td>
 		</tr>
-		<tr>
+		<tr align="center"width="100">
 			<td hidden="true"><input value="<%=rs("guaranteeInfoID")%>"></td>
-			<td align="center" valign="center" >数量</td>
+			<td >数量</td>
 			<td><input type="text"name="weatherReason"value="<%=rs("weatherReason")%>"></td>
 			<td><input type="text"name="flightChange"value="<%=rs("flightChange")%>"></td>
 			<td><input type="text"name="planReason"value="<%=rs("planReason")%>"></td>
@@ -36,13 +38,11 @@
 			<td><input type="text"name="administrativeChange"value="<%=rs("administrativeChange")%>"></td>
 			<td><input type="text"name="otherReason"value="<%=rs("otherReason")%>"></td>
 		</tr>
-		
-		</thead>
 </table>
-
-<br><br>
-		<p align="center"><input type="submit" name="" value="更新"></p>
+<br>
+<p align="center"><input type="submit" name="" value="更新"></p>
 </form>
+</div>
 </div>
 
 </body>

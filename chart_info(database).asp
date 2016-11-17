@@ -34,5 +34,5 @@
 	sql ="Update guaranteeInfo Set weatherReason ='"&weatherReason&"',flightChange ='"&flightChange&"',planReason ='"&planReason&"',aircrewReason ='"&aircrewReason&"',administrativeChange ='"&administrativeChange&"',otherReason ='"&otherReason&"' where guaranteeInfoID="&guaranteeInfoID
 	conn.Execute sql
 
-	response.redirect("infoSchedule.asp")
+	response.redirect("infoSchedule_Jovia.asp")
 %>

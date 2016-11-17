@@ -1,6 +1,8 @@
 <!-- #include file="conn_db.asp" -->
 
 
+
+
 <html>
 <head>
 	<title>飞行员资质管理更新</title>
@@ -20,10 +22,14 @@
 		</select>
 		<br>
 		<br>
-		搭 配 限 制：<input type="text" name='matchLimit' maxlength="150" >
+		
+		搭 配 限 制：<input type="text" id='matchLimit' maxlength="150" >
 		<br>
 		<br>
 		机 场 限 制：<input type="text" name='airportLimit'>
+		<br>
+		<br>
+		夜 航 限 制：<input type="text" name='nightLimit'>
 		<br>
 		<br>
 		备&nbsp;&nbsp;&nbsp; 注：<input type="text" name='remarks'>

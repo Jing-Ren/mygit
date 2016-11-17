@@ -6,29 +6,42 @@
 	Set plan3 = conn.Execute("select * from pilotMonthPlan where ID=3")
 	Set plan4 = conn.Execute("select * from pilotMonthPlan where ID=4")
 	Set op = conn.Execute("select * from flightOperation")
-    Set vi = conn.Execute("select * from vipInfo")
-	Set local = conn.Execute("select * from localGuarantee")
+	Set ch = conn.Execute("select * from checkList")
 	Set tip6 = conn.Execute("select * from tipInfo where tipInfoID=6")
+	Set ca = conn.Execute("select * from caseLab")
+	Set ca1 = conn.Execute("select * from caseLab where caseType=''")
+	
+	
+	
 %>
+<%
+
+	Set per1 = conn.Execute("select count(*) as num1 from checkList where isFinish='完成'")
+	Set per2 = conn.Execute("select count(*) as num2 from checkList where isFinish='未完成'")
+	
+%>
+
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8"> 
-	<title>生产信息调度</title>
-	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
-	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-	
+<meta charset="utf-8"> 
+<title>生产信息调度</title>
+<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
  	<h1 align="center">生产信息调度</h1>
 	<ul id="myTab" class="nav nav-tabs">
 		<li class="active"><a href="#dispatch" data-toggle="tab">调度调整原因分析</a></li>
+		<li><a href="#case" data-toggle="tab">案例库</a></li>
 		<li><a href="#month" data-toggle="tab">飞行员月计划汇总表</a></li>
 		<li><a href="#operation" data-toggle="tab">航班运行情况汇总表</a></li>
-		<li><a href="#vip" data-toggle="tab">要客保障情况</a></li>
-		<li><a href="#local" data-toggle="tab">本场保障情况</a></li>
+		<li><a href="#check" data-toggle="tab">飞行计划编排检查单</a></li>	
 	</ul>
+<br>
+<br>
+<br>
 <!-- 饼状图表示 -->	
 <div id="myTabContent" class="tab-content">
 <div id="dispatch" class="tab-pane fade in active"align="center">
@@ -90,6 +103,11 @@
         
                 // 为echarts对象加载数据 
                 myChart.setOption(option); 
+				myChart.on('click', function (params) {
+				var caseType = params.name
+				window.open("caseInfo.asp?caseType=" + caseType);
+				<!-- window.open('https://www.baidu.com/s?wd=' + encodeURIComponent(params.name));-->
+				});	
             }
         );
     </script>
@@ -108,6 +126,43 @@
 </div>
     <!-- 饼状图表示-end -->
 </div>
+
+<!-- 案例库start  -->
+<div id="case" class="tab-pane fade active"align="center">
+<div style="width: 60%;">
+<table class="table table-striped">
+<form>
+	<caption align="top">案例库<br></caption>
+		<tr>		
+			<td hidden="true"></td>
+			<td >时间</td>
+			<td>案例类型</td>
+			<td>详细内容</td>
+			<td>操作</td>
+		</tr>
+		<% do while not ca.eof%>
+		<tr> 
+			<td hidden="true"><%=ca("caseLabID")%></td>
+			<td><%=ca("caseTime")%></td>
+			<td><%=ca("caseType")%></td>
+			<td><%=ca("caseDetail")%></td>		
+			<td><a href="caseUpdate.asp?caseLabID=<%=ca("caseLabID")%>">更新</a> <a href="caseDelete(db).asp?caseLabID=<%=ca("caseLabID")%>">删除</a></td>			
+		</tr>
+		<% ca.movenext 
+		loop%>
+</form>
+</table>
+	<div align="center">
+	<br><br>
+		<button ><a href="caseInsert.html"target="_top"> 添加新案例</a></button>
+		
+	</div>
+</div>	
+
+
+</div>
+<!-- 案例库end -->
+
 <!-- 飞行员月计划情况表start -->
 <div id="month"class="tab-pane fade active"align="center">
 	<div style="width: 40%;">
@@ -205,9 +260,7 @@
 <table class="table table-striped">
 <form>
 	<caption align="top">航班运行情况表 <br></caption>
-		<thead>
-		<tr>
-			
+		<tr>		
 			<td >保障时间</td>
 			<td>保障航班量</td>
 			<td>飞机日利用率</td>
@@ -216,8 +269,7 @@
 			<td >操作</td>
 		</tr>
 		<% do while not op.eof%>
-		<tr>
-		 
+		<tr> 
 			<td><%=op("flightTime")%></td>
 			<td><%=op("flightCount")%></td>
 			<td><%=op("flightUsage")%></td>		
@@ -227,100 +279,79 @@
 		</tr>
 		<% op.movenext 
 		loop%>
-		
-		</thead>
 </form>
 </table>
 	<div align="center">
 	<br><br>
-		<button class="easyui-linkbutton"type="submit"> <a href="operationInsert.html"target="_top">添加运行情况</a></button>
+		<button ><a href="operationInsert.html"target="_top"> 添加运行情况</a></button>
+		
 	</div>
 </div>	
 
 
 </div>
 <!-- 航班运行情况表end -->
+
+<!-- 检查单 -->
+<div id="check" class="tab-pane fade active"align="center">
+<div style="width:60%">
+<!--进度条-->
+
+<div class="progress">
+<script>
+	$(function(){
+		$("#jingdu").css("height",<%=per1("num1")%>*10)
+	})
+</script>
+  <div class="progress-bar"id="jingdu" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"style="width:60%;height:5px" >
+	
+  </div>
+</div>
+<!--进度条end-->
 <br>
 <br>
 <br>
-<!-- 要客保障表start -->
-<div id="vip"class="tab-pane fade active"align="center">
-<div style="width: 60%;">
-<table class="table table-striped">
-<caption align="top">要客保障表</caption>
-<form>
-		<thead>
-		<tr>
-		
+<form name="plan"method="post"action="checkUpdate.asp">
+<table class="table table-striped"frame="hsides"border="1">
+	<tr align="center">
+		<td hidden="true">编号</td>
 		<td>时间</td>
-		<td>要客姓名</td>
-		<td>职务</td>
-		<td>级别</td>
-		<td>航班号</td>
-		<td>保障名单</td>
+		<td>项目</td>
+		<td>是否完成</td>
+		<td>备注</td>
 		<td>操作</td>
-		</tr>
-		<% do while not vi.eof%>
-		<tr>
-			
-			<td><%=vi("vipTime")%></td>
-			<td><%=vi("vipName")%></td>
-			<td><%=vi("vipDuty")%></td>
-			<td><%=vi("vipTitle")%></td>		
-			<td><%=vi("flightNum")%></td>		
-			<td><%=vi("guaranteeList")%></td>
-			<td><a href="vipUpdate.asp?vipInfoID=<%=vi("vipInfoID")%>">更新</a> <a href="vipDelete.asp?vipInfoID=<%=vi("vipInfoID")%>">删除</a></td>				
-		</tr>
-		<% vi.movenext 
-		loop%>
-		
-		</thead>
+	</tr>
+	<%do while not ch.eof%>
+	<tr align="center">
+		<td hidden="true"name="checkListID"><%=ch("checkListID")%></td>
+		<td width="100"name="checkTime"><%=ch("checkTime")%></td>
+		<td width="320"name="checkProject"><%=ch("checkProject")%></td>
+		<td width="100"name="isFinish"><%=ch("isFinish")%></td>
+		<!--
+		<td>
+		<select name="isFinish">
+			<option value="完成"> 完成</option>
+			<option value="未完成"> 未完成</option>
+        </select>	
+		</td>
+		-->
+		<td name="remarks"><%=ch("remarks")%></td>
+		<td><button type="submit"><a href="checkUpdate.asp?checkListID=<%=ch("checkListID")%>" target="_blank">更新</a></button></td>
+	</tr>
+	<% ch.movenext
+	loop%>
+<table>
 </form>
-</table>
-	<div align="center">
-	<br><br>
-		<button class="easyui-linkbutton"type="submit"> <a href="vipInsert.html"target="_top">添加要客保障信息</a></button>
-	</div>
+<script language="javascript">
+function show(){
+	plan.select_text.value = plan.test.options[]
+}
 
-</div>
-</div>
-<!-- 要客保障表end -->
+</script>
 
-<!-- 本场保障情况start -->
-<div id="local"class="tab-pane fade active"align="center">
-<div style="width: 60%;">
-<table class="table table-striped">
-<form>
-	<caption align="top">本场保障情况表</caption>
-		<thead>
-		<tr>
-		<td>本场类型</td>
-		<td>计划任务</td>
-		<td>已完成情况</td>
-		<td>未完成原因</td>
-		<td>操作</td>
-		</tr>
-		<% do while not local.eof%>
-		<tr>
-			<td><%=local("localType")%></td>
-			<td><%=local("localPlan")%></td>
-			<td><%=local("performance")%></td>
-			<td><%=local("unfinishReason")%></td>	
-			<td><a href="localUpdate.asp?localGuaranteeID=<%=local("localGuaranteeID")%>">更新</a> <a href="localDelete.asp?localGuaranteeID=<%=local("localGuaranteeID")%>">删除</a></td>				
-		</tr>
-		<% local.movenext 
-		loop%>
-		</thead>
-</form>
-</table>
-	<div align="center">
-	<br><br>
-		<button class="easyui-linkbutton"type="submit"> <a href="localInsert.html"target="_top">添加本场保障情况</a></button>
-	</div>
-</div>
-</div>
-<!-- 本场保障情况表end -->
 
+
+<!-- 检查单end -->
 </div>
 </body>
 </html>
